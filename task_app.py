@@ -10,7 +10,7 @@ DEFAULT_PRIORITY = "normal"
 # --- Функции для тестов (ПР2) ---
 def add_task(title, priority=DEFAULT_PRIORITY):
     if not title:
-        pass  # Заглушка вместо проверки
+        raise ValueError("Title cannot be empty")
     return {"title": title, "status": "open", "priority": priority}
 
 def mark_done(task):
