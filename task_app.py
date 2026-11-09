@@ -1,4 +1,4 @@
-DEFAULT_PRIORITY = "normal"  #вариант А
+DEFAULT_PRIORITY = "normal"  
 
 # код
 def add_task(title, priority=DEFAULT_PRIORITY):
