@@ -6,6 +6,9 @@ def add_task(title):
 def mark_done(task):
     task["status"] = "done"
 
+def filter_tasks(tasks, status):
+    return [t for t in tasks if t["status"] == status]
+
 def main():
     print("Task App started")
 
