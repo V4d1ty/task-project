@@ -3,6 +3,9 @@ def add_task(title):
         raise ValueError("Title cannot be empty")
     return {"title": title, "status": "open"}
 
+def mark_done(task):
+    task["status"] = "done"
+
 def main():
     print("Task App started")
 
