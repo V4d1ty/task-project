@@ -1,7 +1,9 @@
-def add_task(title):
+DEFAULT_PRIORITY = "normal"
+
+def add_task(title, priority=DEFAULT_PRIORITY):
     if not title:
         raise ValueError("Title cannot be empty")
-    return {"title": title, "status": "open"}
+    return {"title": title, "status": "open", "priority": priority}
 
 def mark_done(task):
     task["status"] = "done"
