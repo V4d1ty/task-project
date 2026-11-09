@@ -7,6 +7,23 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 TASKS_FILE = "tasks.json"
 DEFAULT_PRIORITY = "normal"
 
+# --- Функции для тестов (ПР2) ---
+def add_task(title, priority=DEFAULT_PRIORITY):
+    if not title:
+        raise ValueError("Title cannot be empty")
+    return {"title": title, "status": "open", "priority": priority}
+
+def mark_done(task):
+    task["status"] = "done"
+
+def filter_tasks(tasks, status):
+    return [t for t in tasks if t["status"] == status]
+
+def sort_tasks_by_priority(tasks):
+    order = {"high": 0, "normal": 1, "low": 2}
+    return sorted(tasks, key=lambda t: order.get(t.get("priority", "normal"), 1))
+
+# --- Функции для сервера (ПР3) ---
 def load_tasks(file_path=TASKS_FILE):
     if not os.path.exists(file_path):
         return [
