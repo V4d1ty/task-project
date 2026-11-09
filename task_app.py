@@ -11,6 +11,10 @@ def mark_done(task):
 def filter_tasks(tasks, status):
     return [t for t in tasks if t["status"] == status]
 
+def sort_tasks_by_priority(tasks):
+    order = {"high": 0, "normal": 1, "low": 2}
+    return sorted(tasks, key=lambda t: order.get(t.get("priority", "normal"), 1))
+
 def main():
     print("Task App started")
 
