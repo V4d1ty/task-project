@@ -1,6 +1,5 @@
 DEFAULT_PRIORITY = "normal"  
 
-# код
 def add_task(title, priority=DEFAULT_PRIORITY):
     if not title:
         raise ValueError("Title cannot be empty")
