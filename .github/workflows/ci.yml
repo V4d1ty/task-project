@@ -1,0 +1,73 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile check
+        run: |
+          python --version
+          python -m py_compile task_app.py
+          python -m py_compile tests/*.py
+
+  unit_tests:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+  package:
+    needs: unit_tests
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create dist
+        run: |
+          mkdir dist
+          cp task_app.py README.md Dockerfile tasks.json.example dist/
+          echo "CI_COMMIT_SHA=${{ github.sha }}" > dist/manifest.txt
+          echo "CI_PIPELINE_ID=${{ github.run_id }}" >> dist/manifest.txt
+          ls dist >> dist/manifest.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-package
+          path: dist/
+          retention-days: 7
+
+  deploy_test:
+    needs: package
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: test-tasks
+    steps:
+      - name: Check Secret and Deploy
+        run: |
+          if [ -z "${{ secrets.DEPLOY_TOKEN }}" ]; then
+            echo "DEPLOY_TOKEN is missing!"; exit 1
+          fi
+          echo "Deploying..."
+          echo "Deployment completed at $(date)" > deployment.txt
+      - name: Upload Deploy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-report
+          path: deployment.txt
